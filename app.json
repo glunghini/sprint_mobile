@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "Ford Dealer Intelligence",
+    "slug": "ford-dealer-intelligence",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#001A4E"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.ford.dealerintelligence"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#001A4E"
+      },
+      "package": "com.ford.dealerintelligence"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "scheme": "ford-app",
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
