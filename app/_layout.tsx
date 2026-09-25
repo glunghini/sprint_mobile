@@ -6,9 +6,11 @@ export default function Layout() {
     <SafeAreaProvider>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
+        <Stack.Screen name="register" />
         <Stack.Screen name="home" />
         <Stack.Screen name="comparacao" />
         <Stack.Screen name="comparacao-detalhe" />
+        <Stack.Screen name="relatorios" />
       </Stack>
     </SafeAreaProvider>
   );

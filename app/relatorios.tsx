@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Line, Circle, Path, Text as SvgText, Defs, LinearGradient as SvgGrad, Stop } from 'react-native-svg';
-import { FordLogo } from '../src/components/FordLogo';
 
 const TABS = [
   { id: 'vendas', label: 'Vendas' },
@@ -140,7 +139,11 @@ export default function ReportsScreen() {
           <Text style={styles.backText}>{'←'}</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>RELATORIOS</Text>
-        <FordLogo size={22} />
+        <Image
+          source={require('../assets/Ford_Motor_Company_Logo.svg.png')}
+          style={styles.fordLogo}
+          resizeMode="contain"
+        />
       </View>
 
       {/* Tabs */}
@@ -268,6 +271,7 @@ const styles = StyleSheet.create({
   backBtn: { padding: 4 },
   backText: { color: '#fff', fontSize: 22 },
   headerTitle: { fontSize: 15, fontWeight: '800', color: '#fff', letterSpacing: 1 },
+  fordLogo: { width: 55, height: 25 },
   tabRow: { flexDirection: 'row', marginHorizontal: 16, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.1)' },
   tabBtn: { flex: 1, paddingVertical: 12, alignItems: 'center', borderBottomWidth: 2, borderBottomColor: 'transparent' },
   tabBtnActive: { borderBottomColor: '#4A9EFF' },

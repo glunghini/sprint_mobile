@@ -8,19 +8,28 @@ import {
   Image, 
   KeyboardAvoidingView, 
   Platform,
-  ScrollView
+  ScrollView,
+  Alert
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { loadUser } from '../src/data/storage';
 
 export default function LoginScreen() {
   const insets = useSafeAreaInsets();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-    // Redireciona substituindo a rota atual para consolidar o fluxo
+  const handleLogin = async () => {
+    const existing = await loadUser();
+    if (!existing) {
+      Alert.alert('Conta não encontrada', 'Crie uma conta antes de entrar.', [
+        { text: 'Criar conta', onPress: () => router.push('/register') },
+        { text: 'Cancelar', style: 'cancel' },
+      ]);
+      return;
+    }
     router.replace('/home');
   };
 
@@ -35,7 +44,6 @@ export default function LoginScreen() {
           showsVerticalScrollIndicator={false}
         >
           
-          {/* CONTAINER DO LOGO AJUSTADO */}
           <View style={styles.logoContainer}>
             <Image 
               source={require('../assets/Ford_Motor_Company_Logo.svg.png')} 
@@ -46,7 +54,6 @@ export default function LoginScreen() {
             <Text style={styles.appSubtitle}>Enterprise Analytics Platform</Text>
           </View>
 
-          {/* FORMULÁRIO DE ACESSO COM CSS ESTILO HOME */}
           <View style={styles.formContainer}>
             <Text style={styles.inputLabel}>E-mail ou Usuário</Text>
             <TextInput
@@ -72,9 +79,14 @@ export default function LoginScreen() {
             <TouchableOpacity style={styles.loginButton} onPress={handleLogin} activeOpacity={0.9}>
               <Text style={styles.loginButtonText}>ENTRAR</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity style={styles.createAccountBtn} onPress={() => router.push('/register')} activeOpacity={0.7}>
+              <Text style={styles.createAccountText}>
+                Não tem conta? <Text style={styles.createAccountTextBold}>Criar conta</Text>
+              </Text>
+            </TouchableOpacity>
           </View>
 
-          {/* RODAPÉ INFORMATIVO */}
           <View style={styles.footer}>
             <Text style={styles.footerText}>
               Acesso restrito a colaboradores e parceiros autorizados da Ford Motor Company.
@@ -91,8 +103,6 @@ const styles = StyleSheet.create({
   gradient: { flex: 1 },
   container: { flex: 1 },
   scrollContent: { flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24 },
-  
-  // LOGO E TÍTULOS
   logoContainer: { 
     alignItems: 'center', 
     marginBottom: 40 
@@ -117,8 +127,6 @@ const styles = StyleSheet.create({
     marginTop: 6, 
     textTransform: 'uppercase' 
   },
-  
-  // CARD DE LOGIN TRANSLÚCIDO (IGUAL OS CARDS DA HOME)
   formContainer: { 
     backgroundColor: 'rgba(255, 255, 255, 0.05)', 
     borderRadius: 24, 
@@ -150,8 +158,6 @@ const styles = StyleSheet.create({
     borderWidth: 1, 
     borderColor: 'rgba(255, 255, 255, 0.1)' 
   },
-  
-  // BOTÃO PREMIUM AZUL DESTAQUE
   loginButton: { 
     backgroundColor: '#4DA6FF', 
     paddingVertical: 16, 
@@ -170,8 +176,18 @@ const styles = StyleSheet.create({
     fontSize: 15, 
     letterSpacing: 1.5 
   },
-  
-  // FOOTER
+  createAccountBtn: {
+    marginTop: 18,
+    alignItems: 'center'
+  },
+  createAccountText: {
+    color: 'rgba(255, 255, 255, 0.5)',
+    fontSize: 13
+  },
+  createAccountTextBold: {
+    color: '#4DA6FF',
+    fontWeight: '900'
+  },
   footer: { 
     marginTop: 35, 
     alignItems: 'center' 

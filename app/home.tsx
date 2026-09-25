@@ -14,7 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { loadUser, User } from '../src/data/storage';
+import { loadUser, clearUser, User } from '../src/data/storage';
 
 const HORIZONTAL_PADDING = 16;
 
@@ -72,7 +72,11 @@ export default function HomeScreen() {
     loadUser().then(setUser);
   }, []);
 
-  // AUTO SLIDER
+  const handleLogout = async () => {
+    await clearUser();
+    router.replace('/');
+  };
+
   useEffect(() => {
     const interval = setInterval(() => {
       setSlide(prev => {
@@ -113,7 +117,6 @@ export default function HomeScreen() {
         ]}
       >
 
-        {/* HEADER */}
         <View style={styles.topBar}>
           <View>
             <Text style={styles.welcome}>
@@ -125,14 +128,19 @@ export default function HomeScreen() {
             </Text>
           </View>
 
-          <Image
-            source={require('../assets/Ford_Motor_Company_Logo.svg.png')}
-            style={styles.fordLogo}
-            resizeMode="contain"
-          />
+          <View style={styles.topBarLogoWrap} pointerEvents="none">
+            <Image
+              source={require('../assets/Ford_Motor_Company_Logo.svg.png')}
+              style={styles.fordLogo}
+              resizeMode="contain"
+            />
+          </View>
+
+          <TouchableOpacity onPress={handleLogout} style={styles.logoutBtn}>
+            <Text style={styles.logoutText}>Sair</Text>
+          </TouchableOpacity>
         </View>
 
-        {/* SLIDER */}
         <View
           style={[
             styles.sliderContainer,
@@ -143,10 +151,8 @@ export default function HomeScreen() {
             ref={flatRef}
             data={SLIDES}
             horizontal
-            pagingEnabled={false}
-            snapToInterval={sliderWidth}
+            pagingEnabled
             decelerationRate="fast"
-            disableIntervalMomentum
             removeClippedSubviews={false}
             initialNumToRender={3}
             windowSize={3}
@@ -196,7 +202,6 @@ export default function HomeScreen() {
             )}
           />
 
-          {/* DOTS */}
           <View style={styles.dotsRow}>
             {SLIDES.map((_, i) => (
               <TouchableOpacity
@@ -221,7 +226,6 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* SERVIÇOS */}
         <Text style={styles.sectionLabel}>
           SERVIÇOS
         </Text>
@@ -274,6 +278,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
+    position: 'relative',
+  },
+
+  topBarLogoWrap: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    alignItems: 'center',
   },
 
   welcome: {
@@ -292,6 +304,19 @@ const styles = StyleSheet.create({
   fordLogo: {
     width: 60,
     height: 30,
+  },
+
+  logoutBtn: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+  },
+
+  logoutText: {
+    color: 'rgba(255,255,255,0.6)',
+    fontSize: 11,
+    fontWeight: '700',
   },
 
   sliderContainer: {

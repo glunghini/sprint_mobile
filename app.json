@@ -23,11 +23,27 @@
       "package": "com.ford.dealerintelligence"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "kotlinVersion": "1.9.25"
+          }
+        }
+      ]
     ],
     "scheme": "ford-app",
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "1d6f4633-d65a-455e-b098-db6ef085fcbe"
+      }
     }
   }
 }

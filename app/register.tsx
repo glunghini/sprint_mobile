@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity,
-  StyleSheet, ScrollView, KeyboardAvoidingView, Platform,
+  StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Alert, Modal,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
@@ -34,7 +34,11 @@ export default function RegisterScreen() {
       dept: type === 'internal' ? DEPARTMENTS[deptIndex] : undefined,
     });
     setLoading(false);
-    router.replace('/home');
+
+    // Conta criada: volta para a tela de índice (login)
+    Alert.alert('Conta criada!', 'Agora faça login para continuar.', [
+      { text: 'OK', onPress: () => router.replace('/') },
+    ]);
   };
 
   const TypeBtn = ({ val, label }: { val: 'dealer' | 'internal'; label: string }) => (
@@ -43,12 +47,36 @@ export default function RegisterScreen() {
     </TouchableOpacity>
   );
 
-  const CycleSelect = ({ items, index, onPress }: { items: string[]; index: number; onPress: () => void }) => (
-    <TouchableOpacity style={styles.input} onPress={onPress}>
-      <Text style={{ color: '#fff', fontSize: 15, fontFamily: Font.regular }}>{items[index]}</Text>
-      <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11 }}>toque para alternar</Text>
-    </TouchableOpacity>
-  );
+  const DropdownSelect = ({ label, items, index, onSelect }: { label: string; items: string[]; index: number; onSelect: (i: number) => void }) => {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <TouchableOpacity style={styles.input} onPress={() => setOpen(true)}>
+          <Text style={{ color: '#fff', fontSize: 15, fontFamily: Font.regular }}>{items[index]}</Text>
+          <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11 }}>toque para escolher</Text>
+        </TouchableOpacity>
+
+        <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
+          <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setOpen(false)}>
+            <View style={styles.modalBox}>
+              <Text style={styles.modalTitle}>{label}</Text>
+              <ScrollView style={styles.modalList} keyboardShouldPersistTaps="handled">
+                {items.map((item, i) => (
+                  <TouchableOpacity
+                    key={item}
+                    style={[styles.modalOption, i === index && styles.modalOptionActive]}
+                    onPress={() => { onSelect(i); setOpen(false); }}
+                  >
+                    <Text style={[styles.modalOptionText, i === index && styles.modalOptionTextActive]}>{item}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+          </TouchableOpacity>
+        </Modal>
+      </>
+    );
+  };
 
   return (
     <LinearGradient colors={['#001A4E', '#002878', '#003FA0']} style={styles.gradient}>
@@ -79,12 +107,12 @@ export default function RegisterScreen() {
 
           {type === 'dealer' && <>
             <Text style={styles.sectionLabel}>CONCESSIONÁRIA</Text>
-            <CycleSelect items={DEALERSHIPS} index={dealerIndex} onPress={() => setDealerIndex(i => (i + 1) % DEALERSHIPS.length)} />
+            <DropdownSelect label="Selecione a concessionária" items={DEALERSHIPS} index={dealerIndex} onSelect={setDealerIndex} />
           </>}
 
           {type === 'internal' && <>
             <Text style={styles.sectionLabel}>DEPARTAMENTO</Text>
-            <CycleSelect items={DEPARTMENTS} index={deptIndex} onPress={() => setDeptIndex(i => (i + 1) % DEPARTMENTS.length)} />
+            <DropdownSelect label="Selecione o departamento" items={DEPARTMENTS} index={deptIndex} onSelect={setDeptIndex} />
           </>}
 
           <TouchableOpacity style={[styles.btnPrimary, loading && { opacity: 0.6 }]} onPress={handleRegister} disabled={loading}>
@@ -113,4 +141,13 @@ const styles = StyleSheet.create({
   input: { backgroundColor: 'rgba(255,255,255,0.1)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14, color: '#fff', fontSize: 15, fontFamily: Font.regular },
   btnPrimary: { backgroundColor: '#0050C8', borderRadius: 50, paddingVertical: 15, alignItems: 'center', marginTop: 32, elevation: 6 },
   btnText: { color: '#fff', fontSize: 15, fontFamily: Font.black, letterSpacing: 1.5 },
+
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,8,30,0.7)', justifyContent: 'center', padding: 24 },
+  modalBox: { backgroundColor: '#002166', borderRadius: 18, borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)', padding: 16, maxHeight: '70%' },
+  modalTitle: { fontSize: 13, fontFamily: Font.bold, color: 'rgba(255,255,255,0.5)', letterSpacing: 1, marginBottom: 12, textTransform: 'uppercase' },
+  modalList: { flexGrow: 0 },
+  modalOption: { paddingVertical: 14, paddingHorizontal: 12, borderRadius: 10, marginBottom: 4 },
+  modalOptionActive: { backgroundColor: 'rgba(74,158,255,0.15)' },
+  modalOptionText: { color: 'rgba(255,255,255,0.7)', fontSize: 15, fontFamily: Font.regular },
+  modalOptionTextActive: { color: '#4A9EFF', fontFamily: Font.bold },
 });
